@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <header>
+    <h1>Inventory Management</h1>
+  </header>
+  <section>
+    <!-- Add Item Form -->
+    <form id="addItemForm">
+      <select id="shopSelect"></select>
+      <input type="text" id="itemName" placeholder="Item Name" required>
+      <input type="number" id="itemPrice" placeholder="Item Price" required>
+      <input type="number" id="itemStock" placeholder="Item Stock" required>
+      <button type="submit">Add Item</button>
+    </form>
+
+    <!-- Inventory List -->
+    <h2>Inventory</h2>
+    <ul id="inventoryList"></ul>
+  </section>
+  <script>
+    const API_BASE = 'http://localhost:8080/';
+
+    // Fetch all shops for shop dropdown
+    async function fetchShops() {
+      const res = await fetch(`${API_BASE}shops`);
+      const shops = await res.json();
+      const shopSelect = document.getElementById('shopSelect');
+
+      shopSelect.innerHTML = shops.map(shop => `
+        <option value="${shop.id}">${shop.name}</option>
+      `).join('');
+    }
+
+    // Fetch inventory and render it
+    async function fetchInventory() {
+      const res = await fetch(`${API_BASE}items`);
+      const items = await res.json();
+      const inventoryList = document.getElementById('inventoryList');
+
+      inventoryList.innerHTML = items.map(item => `
+        <li>
+          <h3>${item.name}</h3>
+          <p>Price: $${item.price.toFixed(2)}</p>
+          <p>Stock: ${item.stock}</p>
+          <p>Shop ID: ${item.shop_id}</p>
+          <button onclick="deleteItem(${item.id})">Delete</button>
+          <button onclick="showUpdateForm(${item.id}, '${item.name}', ${item.price}, ${item.stock})">Update</button>
+        </li>
+      `).join('');
+    }
+
+    // Add new item
+    document.getElementById('addItemForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const shop_id = document.getElementById('shopSelect').value;
+      const name = document.getElementById('itemName').value;
+      const price = parseFloat(document.getElementById('itemPrice').value);
+      const stock = parseInt(document.getElementById('itemStock').value, 10);
+
+      await fetch(`${API_BASE}items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, price, stock, shop_id }),
+      });
+
+      fetchInventory(); // Refresh inventory
+    });
+
+    // Delete item
+    async function deleteItem(itemId) {
+      await fetch(`${API_BASE}items/${itemId}`, { method: 'DELETE' });
+      fetchInventory(); // Refresh inventory
+    }
+
+    // Show update form with pre-filled data
+    function showUpdateForm(itemId, itemName, itemPrice, itemStock) {
+      const updateForm = document.createElement('form');
+      updateForm.innerHTML = `
+        <input type="text" id="updateName" value="${itemName}" required>
+        <input type="number" id="updatePrice" value="${itemPrice}" required>
+        <input type="number" id="updateStock" value="${itemStock}" required>
+        <button type="submit">Update</button>
+      `;
+      const listItem = document.querySelector(`[onclick="showUpdateForm(${itemId}, '${itemName}', ${itemPrice}, ${itemStock})"]`).parentElement;
+      listItem.appendChild(updateForm);
+
+      updateForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('updateName').value;
+        const price = parseFloat(document.getElementById('updatePrice').value);
+        const stock = parseInt(document.getElementById('updateStock').value, 10);
+
+        await fetch(`${API_BASE}items/${itemId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, price, stock }),
+        });
+
+        fetchInventory(); // Refresh inventory
+      });
+    }
+
+    // Initialize
+    fetchShops();
+    fetchInventory();
+  </script>
+</body>
+</html>

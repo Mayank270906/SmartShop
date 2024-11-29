@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shops Management</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <header>
+    <h1>Shops Management</h1>
+  </header>
+  <section>
+    <!-- Add Shop Form -->
+    <form id="addShopForm">
+      <input type="text" id="shopName" placeholder="Shop Name" required>
+      <input type="text" id="shopLocation" placeholder="Shop Location" required>
+      <button type="submit">Add Shop</button>
+    </form>
+
+    <!-- Shop List -->
+    <h2>Shop List</h2>
+    <ul id="shopList"></ul>
+  </section>
+  <script>
+    const API_BASE = 'http://localhost:8080/';
+
+    // Fetch all shops and render them
+    async function fetchShops() {
+      const res = await fetch(`${API_BASE}shops`);
+      const shops = await res.json();
+      const shopList = document.getElementById('shopList');
+
+      shopList.innerHTML = shops.map(shop => `
+        <li>
+          <h3>${shop.name}</h3>
+          <p>Location: ${shop.location}</p>
+          <button onclick="deleteShop(${shop.id})">Delete</button>
+          <button onclick="showUpdateShopForm(${shop.id}, '${shop.name}', '${shop.location}')">Update</button>
+        </li>
+      `).join('');
+    }
+
+    // Add new shop
+    document.getElementById('addShopForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = document.getElementById('shopName').value;
+      const location = document.getElementById('shopLocation').value;
+
+      await fetch(`${API_BASE}shops`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, location }),
+      });
+
+      fetchShops(); // Refresh shop list
+    });
+
+    // Delete shop
+    async function deleteShop(shopId) {
+      await fetch(`${API_BASE}shops/${shopId}`, { method: 'DELETE' });
+      fetchShops(); // Refresh shop list
+    }
+
+    // Show update form with pre-filled data
+    function showUpdateShopForm(shopId, shopName, shopLocation) {
+      const updateForm = document.createElement('form');
+      updateForm.innerHTML = `
+        <input type="text" id="updateShopName" value="${shopName}" required>
+        <input type="text" id="updateShopLocation" value="${shopLocation}" required>
+        <button type="submit">Update</button>
+      `;
+      const listItem = document.querySelector(`[onclick="showUpdateShopForm(${shopId}, '${shopName}', '${shopLocation}')"]`).parentElement;
+      listItem.appendChild(updateForm);
+
+      updateForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const name = document.getElementById('updateShopName').value;
+        const location = document.getElementById('updateShopLocation').value;
+
+        await fetch(`${API_BASE}shops/${shopId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, location }),
+        });
+
+        fetchShops(); // Refresh shop list
+      });
+    }
+
+    // Initialize
+    fetchShops();
+  </script>
+</body>
+</html>
