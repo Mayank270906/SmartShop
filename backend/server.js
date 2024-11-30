@@ -84,6 +84,29 @@ app.delete('/shops/:id', (req, res) => {
   });
 });
 
+// Update a shop
+app.put('/shops/:id', (req, res) => {
+  const shopId = req.params.id;
+  const { name, location } = req.body;
+
+  const query = `UPDATE shops SET name = ?, location = ? WHERE id = ?`;
+  db.run(query, [name, location, shopId], err => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Shop updated successfully' });
+  });
+});
+
+// Inserting new items in inventory
+app.post('/items', (req, res) => {
+  const { name, price, stock, shop_id } = req.body;
+  const query = `INSERT INTO items (name, price, stock, shop_id) VALUES (?, ?, ?, ?)`;
+  db.run(query, [name, price, stock, shop_id], function (err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: 'Item added', id: this.lastID });
+  });
+});
+
+
 // Update an item in inventory
 app.put('/items/:id', (req, res) => {
     const itemId = req.params.id;
