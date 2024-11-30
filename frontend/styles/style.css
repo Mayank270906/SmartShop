@@ -1,0 +1,183 @@
+/* General Reset */
+body, h1, h2, h3, p, ul, li, form, input, button {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Body Styling */
+  body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f9;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Header Styling */
+  header {
+    background-color: #0078d4;
+    color: #fff;
+    width: 100%;
+    padding: 15px 0;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  /* Section Styling */
+  section {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  /* Form Styling */
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  form input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+  
+  form input:focus {
+    border-color: #0078d4;
+  }
+  
+  form button {
+    background-color: #0078d4;
+    color: white;
+    font-size: 1rem;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  form button:hover {
+    background-color: #005bb5;
+  }
+  
+  /* Shop List Styling */
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #0078d4;
+  }
+  
+  #shopList {
+    list-style: none;
+  }
+  
+  #shopList li {
+    background: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #shopList li h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  #shopList li p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  #shopList li button {
+    align-self: flex-start;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  #shopList li button:hover {
+    background-color: #cc3d3f;
+  }
+  
+  #shopList li button:nth-child(2) {
+    background-color: #0078d4;
+  }
+  
+  #shopList li button:nth-child(2):hover {
+    background-color: #005bb5;
+  }
+  
+  /* Update Form Styling */
+  #shopList li form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #shopList li form input {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+  
+  #shopList li form button {
+    font-size: 0.9rem;
+    padding: 8px;
+    background-color: #0078d4;
+  }
+  
+  #shopList li form button:hover {
+    background-color: #005bb5;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    body {
+      padding: 10px;
+    }
+  
+    section {
+      padding: 15px;
+    }
+  
+    header h1 {
+      font-size: 1.8rem;
+    }
+  
+    h2 {
+      font-size: 1.4rem;
+    }
+  
+    form input, form button, #shopList li form input, #shopList li form button {
+      font-size: 0.85rem;
+    }
+  }
+  

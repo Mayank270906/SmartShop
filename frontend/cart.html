@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+<body>
+  <header>
+    <h1>Your Cart</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="shops.html">Shops</a></li>
+        <li><a href="inventory.html">Inventory</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <section id="cart">
+      <h2>Cart Items</h2>
+      <div id="cart-items"></div>
+      <button id="checkout-btn">Checkout</button>
+    </section>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const API_BASE = 'http://localhost:8080/';
+      
+      // Fetch Cart Items
+      const fetchCart = async () => {
+        const res = await fetch(`${API_BASE}cart`);
+        const cartItems = await res.json();
+        const cartItemsDiv = document.getElementById('cart-items');
+
+        if (cartItems.length === 0) {
+          cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+          return;
+        }
+
+        cartItemsDiv.innerHTML = cartItems.map(item => `
+          <div>
+            <h3>${item.item_name}</h3>
+            <p>Price: $${item.price.toFixed(2)}</p>
+            <p>Quantity: ${item.quantity}</p>
+            <p>Total: $${item.total_price.toFixed(2)}</p>
+            <button onclick="removeFromCart(${item.id})">Remove</button>
+          </div>
+        `).join('');
+      };
+
+      // Remove item from cart
+      window.removeFromCart = async (cartId) => {
+        await fetch(`${API_BASE}cart/${cartId}`, {
+          method: 'DELETE',
+        });
+        fetchCart(); // Refresh cart
+      };
+
+      // Checkout functionality (clear the cart)
+      document.getElementById('checkout-btn').addEventListener('click', async () => {
+        await fetch(`${API_BASE}checkout`, { method: 'POST' });
+        alert('Checkout successful!');
+        fetchCart();
+      });
+
+      // Initialize
+      fetchCart();
+    });
+  </script>
+</body>
+</html>
