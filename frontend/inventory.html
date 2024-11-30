@@ -59,19 +59,32 @@
     // Add new item
     document.getElementById('addItemForm').addEventListener('submit', async e => {
       e.preventDefault();
-      const shop_id = document.getElementById('shopSelect').value;
+      const shop_id = parseInt(document.getElementById('shopSelect').value, 10);
       const name = document.getElementById('itemName').value;
       const price = parseFloat(document.getElementById('itemPrice').value);
       const stock = parseInt(document.getElementById('itemStock').value, 10);
 
-      await fetch(`${API_BASE}items`, {
+      // Check if required fields are valid
+      if (!name || isNaN(price) || isNaN(stock) || isNaN(shop_id)) {
+        alert('Please fill out all fields correctly.');
+        return;
+      }
+
+      const response = await fetch(`${API_BASE}items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, price, stock, shop_id }),
       });
 
-      fetchInventory(); // Refresh inventory
+     if (response.ok) {
+        alert('Item added successfully');
+        fetchInventory(); // Refresh inventory after adding item
+      } else {
+        const errorData = await response.json();
+        alert(`Error adding item: ${errorData.error}`);
+      }
     });
+
 
     // Delete item
     async function deleteItem(itemId) {
