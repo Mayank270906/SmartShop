@@ -32,11 +32,13 @@
       const shopList = document.getElementById('shopList');
 
       shopList.innerHTML = shops.map(shop => `
-        <li>
-          <h3>${shop.name}</h3>
-          <p>Location: ${shop.location}</p>
-          <button onclick="deleteShop(${shop.id})">Delete</button>
-          <button onclick="showUpdateShopForm(${shop.id}, '${shop.name}', '${shop.location}')">Update</button>
+        <li id="shop-${shop.id}">
+          <div class="shop-details">
+            <h3>${shop.name}</h3>
+            <p>Location: ${shop.location}</p>
+            <button onclick="deleteShop(${shop.id})">Delete</button>
+            <button onclick="showUpdateShopForm(${shop.id}, '${shop.name}', '${shop.location}')">Update</button>
+          </div>
         </li>
       `).join('');
     }
@@ -64,24 +66,25 @@
 
     // Show update form with pre-filled data
     function showUpdateShopForm(shopId, shopName, shopLocation) {
-      const updateForm = document.createElement('form');
-      updateForm.innerHTML = `
-        <input type="text" id="updateShopName" value="${shopName}" required>
-        <input type="text" id="updateShopLocation" value="${shopLocation}" required>
-        <button type="submit">Update</button>
+      const shopElement = document.getElementById(`shop-${shopId}`);
+      shopElement.innerHTML = `
+        <form id="updateShopForm-${shopId}">
+          <input type="text" id="updateShopName-${shopId}" value="${shopName}" required>
+          <input type="text" id="updateShopLocation-${shopId}" value="${shopLocation}" required>
+          <button type="submit">Update</button>
+          <button type="button" onclick="fetchShops()">Cancel</button>
+        </form>
       `;
-      const listItem = document.querySelector(`[onclick="showUpdateShopForm(${shopId}, '${shopName}', '${shopLocation}')"]`).parentElement;
-      listItem.appendChild(updateForm);
 
-      updateForm.addEventListener('submit', async e => {
+      document.getElementById(`updateShopForm-${shopId}`).addEventListener('submit', async e => {
         e.preventDefault();
-        const name = document.getElementById('updateShopName').value;
-        const location = document.getElementById('updateShopLocation').value;
+        const updatedName = document.getElementById(`updateShopName-${shopId}`).value;
+        const updatedLocation = document.getElementById(`updateShopLocation-${shopId}`).value;
 
         await fetch(`${API_BASE}shops/${shopId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, location }),
+          body: JSON.stringify({ name: updatedName, location: updatedLocation }),
         });
 
         fetchShops(); // Refresh shop list
